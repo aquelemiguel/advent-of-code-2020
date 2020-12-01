@@ -1,12 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <set>
-#include <tuple>
+#include <bits/stdc++.h>
 using namespace std;
 
-vector<int> fileToIntVector(string path) {
+vector<int> file_to_int_vector(string path) {
     int n;
     vector<int> arr;
     ifstream infile(path);
@@ -35,7 +30,7 @@ tuple<int,int,int> part_two(vector<int> &puzzle, int target) {
 }
 
 int main() {
-    vector<int> puzzle = fileToIntVector("input.txt");
+    vector<int> puzzle = file_to_int_vector("input.txt");
     
     pair<int,int> p1 = part_one(puzzle, 2020);
     cout << p1.first * p1.second << endl;
