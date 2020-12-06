@@ -1,54 +1,53 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int get_anyone(string group) {
-    group.erase(remove(group.begin(), group.end(), ','), group.end());
-    return set<char>(group.begin(), group.end()).size();
+typedef vector<string> Group;
+
+int get_anyone(Group group) {
+    auto lambda = [](const string& a, const string &b) { return a+b; };
+    string imploded = accumulate(group.begin(), group.end(), string(), lambda);
+    return set<char>(imploded.begin(), imploded.end()).size();
 }
 
-int get_everyone(string group) {
-    vector<set<char>> groups;
+int get_everyone(Group group) {
+    vector<set<char>> sets;
 
-    for (size_t pos = group.find(','); pos != string::npos; pos = group.find(',')) {
-        string token = group.substr(0, pos);
-        groups.push_back(set<char>(token.begin(), token.end()));
-        group.erase(0, pos + sizeof(','));
-    }
+    for (string ans: group)
+        sets.push_back(set<char>(ans.begin(), ans.end()));
 
-    set<char> last = groups[0], curr;
+    set<char> curr, last = sets[0];
 
-    for (size_t i = 1; i < groups.size(); i++) {
-        set_intersection(last.begin(), last.end(), groups[i].begin(), groups[i].end(), inserter(curr, curr.begin()));
-        swap(last, curr);
-        curr.clear();
+    for (size_t i = 1; i < sets.size(); i++) {
+        set_intersection(last.begin(), last.end(), sets[i].begin(), sets[i].end(), inserter(curr, curr.begin()));
+        swap(last, curr); curr.clear();
     }
     return last.size();
 }
 
-int p1(vector<string> &groups) {
-    return accumulate(groups.begin(), groups.end(), 0, [=](int sum, string group) {
+int p1(vector<Group> groups) {
+    return accumulate(groups.begin(), groups.end(), 0, [=](int sum, Group group) {
         return sum + get_anyone(group);
     });
 }
 
-int p2(vector<string> &groups) {
-    return accumulate(groups.begin(), groups.end(), 0, [=](int sum, string group) {
+int p2(vector<Group> groups) {
+    return accumulate(groups.begin(), groups.end(), 0, [=](int sum, Group group) {
         return sum + get_everyone(group);
     });
 }
 
 int main() {
-    string line;
-    stringstream ss;
+    vector<Group> groups;
 
-    vector<string> groups;
+    while (!cin.eof()) {
+        string line;
+        vector<string> group;
 
-    while(getline(cin, line))
-        if (line.size() == 0) ss << '\n';
-        else ss << line << ',';
+        while (getline(cin, line) && !line.empty())
+            group.push_back(line);
 
-    while (getline(ss, line))
-        groups.push_back(line);
+        groups.push_back(group);
+    }
 
     cout << p1(groups) << endl;
     cout << p2(groups) << endl;
