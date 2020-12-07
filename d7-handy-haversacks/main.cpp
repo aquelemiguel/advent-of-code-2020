@@ -3,42 +3,42 @@
 using namespace std;
 
 typedef map<string, map<string, int>> BagMap;
+BagMap bags;
 
-bool find_bag(BagMap bags, string key, string target) {
+bool find_bag(string key, string target) {
     if (bags[key].find(target) != bags[key].end())
         return true;
 
-    for (auto const& child : bags[key]) {
-        bool found = find_bag(bags, child.first, target);
+    for (auto child : bags[key]) {
+        bool found = find_bag(child.first, target);
         if (found) return true;
     }
 
     return false;
 }
 
-int count_bags(BagMap bags, string key) {
+int count_bags(string key) {
     int count = 0;
     if (bags[key].size() == 0) return 0;
 
-    for (auto const& child : bags[key])
-        count += (child.second + child.second * count_bags(bags, child.first));
+    for (auto child : bags[key])
+        count += (child.second + child.second * count_bags(child.first));
 
     return count;
 }
 
-int p2(BagMap bags, string target) {
-    return count_bags(bags, target);
+int p2(string target) {
+    return count_bags(target);
 }
 
-int p1(BagMap bags, string target) {
+int p1(string target) {
     return count_if(bags.begin(), bags.end(), [=](auto const& bag) {
-        return find_bag(bags, bag.first, target);
+        return find_bag(bag.first, target);
     });
 }
 
 int main() {
     string line;
-    BagMap bags;
 
     while (getline(cin, line)) {
         line = regex_replace(line, regex(" bags contain "), ";");
@@ -58,6 +58,6 @@ int main() {
         }
     }
 
-    cout << p1(bags, "shiny gold") << endl;
-    cout << p2(bags, "shiny gold") << endl;
+    cout << p1("shiny gold") << endl;
+    cout << p2("shiny gold") << endl;
 }
