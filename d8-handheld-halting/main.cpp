@@ -1,86 +1,44 @@
 #include <bits/stdc++.h>
+#include "GB.cpp"
 using namespace std;
 
-enum OPCODE {ACC, JMP, NOP};
+GB p1(vector<Instruction> instructions) {
+    GB gameboy;
+    set<int> ips;
+    gameboy.instructions = instructions;
 
-static map<string, OPCODE> opcode_table = {
-    { "acc", OPCODE::ACC },
-    { "jmp", OPCODE::JMP },
-    { "nop", OPCODE::NOP }
-};
-
-struct INSTR {
-    OPCODE opcode;
-    int value;
-    
-    INSTR(string name, int value) {
-        this->opcode = opcode_table[name];
-        this->value = value;
+    while (ips.find(gameboy.ip) == ips.end() && !gameboy.exited) {
+        ips.insert(gameboy.ip);
+        gameboy.run();
     }
-};
 
-struct Program {
-    int acc = 0;
-    
-    bool run(vector<INSTR> instrs) {
-        set<int> idx;
+    return gameboy;
+}
 
-        for (int i = 0; i < instrs.size(); i++) {
-            if (idx.find(i) != idx.end())
-                return false;
+GB p2(vector<Instruction> instructions) {
+    vector<Instruction> copy = instructions;
 
-            idx.insert(i);
-
-            switch (instrs[i].opcode) {
-                case OPCODE::ACC:
-                    acc += instrs[i].value;
-                    break;
-
-                case OPCODE::JMP:
-                    i += instrs[i].value - 1;
-                    break;
-                
-                default:
-                    break;
-            }  
-        }
-        return true;
-    }
-};
-
-int p2(vector<INSTR> instrs) {
-    vector<INSTR> copy = instrs;
-
-    for (int i = 0; i < instrs.size(); i++) {
-        Program p;
-
-        switch (instrs[i].opcode) {
-            case OPCODE::NOP:
-                instrs[i].opcode = OPCODE::JMP;
-                if (p.run(instrs)) return p.acc;
-                break;
-
-            case OPCODE::JMP:
-                instrs[i].opcode = OPCODE::NOP;
-                if (p.run(instrs)) return p.acc;
+    for (int i = 0; i < instructions.size(); i++, instructions = copy) {
+        switch (instructions[i].opcode) {
+            case OpCode::NOP:
+                instructions[i].opcode = OpCode::JMP;
                 break;
             
+            case OpCode::JMP:
+                instructions[i].opcode = OpCode::NOP;
+                break;
+
             default:
                 break;
         }
-        instrs = copy;
-    }
-    return INT_MAX;
-}
 
-int p1(vector<INSTR> instrs) {
-    Program p;
-    p.run(instrs);
-    return p.acc;
+        GB gameboy = p1(instructions);
+        if (gameboy.exited) return gameboy;
+    }
 }
 
 int main() {
-    vector<INSTR> instrs;
+    vector<Instruction> instructions;
 
     for (string line; getline(cin, line);) {
         stringstream ss(line);
@@ -89,9 +47,10 @@ int main() {
         for (string token; getline(ss, token, ' ');)
             tokens.push_back(token);
 
-        instrs.push_back(INSTR(tokens[0], stoi(tokens[1])));
+        Instruction i = Instruction(tokens[0], stoi(tokens[1]));
+        instructions.push_back(i);
     }
 
-    cout << p1(instrs) << endl;
-    cout << p2(instrs) << endl;
+    cout << p1(instructions).accumulator << endl;
+    cout << p2(instructions).accumulator << endl;
 }
