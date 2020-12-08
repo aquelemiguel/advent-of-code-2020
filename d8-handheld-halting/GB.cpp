@@ -13,8 +13,8 @@ struct Instruction {
     OpCode opcode;
     int value;
 
-    Instruction(string name, int value) {
-        this->opcode = opcode_table[name];
+    Instruction(string opcode, int value) {
+        this->opcode = opcode_table[opcode];
         this->value = value; 
     }
 };
@@ -24,14 +24,25 @@ struct GB {
     vector<Instruction> instructions;
     bool exited = false;
 
-    void run() {
+    GB(vector<Instruction> instructions) {
+        this->instructions = instructions;
+    }
+
+    void step() {
         Instruction inst = this->instructions[this->ip];
 
-        if (inst.opcode == OpCode::ACC) 
-            this->accumulator += inst.value;
+        switch (inst.opcode) {
+            case OpCode::ACC:
+                this->accumulator += inst.value;
+                break;
 
-        if (inst.opcode == OpCode::JMP)
-            this->ip += inst.value - 1;
+            case OpCode::JMP:
+                this->ip += inst.value - 1;
+                break;
+        
+            default:
+                break;
+        }
 
         if (++ip >= instructions.size())
             this->exited = true;

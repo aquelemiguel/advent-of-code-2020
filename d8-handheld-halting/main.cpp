@@ -3,15 +3,13 @@
 using namespace std;
 
 GB p1(vector<Instruction> instructions) {
-    GB gameboy;
+    GB gameboy(instructions);
     set<int> ips;
-    gameboy.instructions = instructions;
 
     while (ips.find(gameboy.ip) == ips.end() && !gameboy.exited) {
         ips.insert(gameboy.ip);
-        gameboy.run();
+        gameboy.step();
     }
-
     return gameboy;
 }
 
