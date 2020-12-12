@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef pair<char,int> Action;
 const long double PI = acos(-1.L);
 
 struct Ship {
@@ -25,7 +24,7 @@ struct Ship {
     }
 };
 
-void p2(Ship &ship, Action action) {
+void p2(Ship &ship, pair<char,int> action) {
     if (action.first == 'N')
         ship.waypoint.second += action.second;
 
@@ -38,13 +37,11 @@ void p2(Ship &ship, Action action) {
     if (action.first == 'W')
         ship.waypoint.first -= action.second;
 
-    if (action.first == 'L') {
+    if (action.first == 'L')
         ship.rotate_waypoint(action.second);
-    }
 
-    if (action.first == 'R') {
+    if (action.first == 'R')
         ship.rotate_waypoint(-action.second);
-    }
 
     if (action.first == 'F') {
         ship.x += (ship.waypoint.first * action.second);
@@ -52,7 +49,7 @@ void p2(Ship &ship, Action action) {
     }
 }
 
-void p1(Ship &ship, Action action) {
+void p1(Ship &ship, pair<char,int> action) {
     if (action.first == 'N')
         ship.y += action.second;
 
