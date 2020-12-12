@@ -25,71 +25,65 @@ struct Ship {
     }
 };
 
-int p2(Ship &ship, vector<Action> &actions) {
-    for (Action action: actions) {
-        if (action.first == 'N')
-            ship.waypoint.second += action.second;
+void p2(Ship &ship, Action action) {
+    if (action.first == 'N')
+        ship.waypoint.second += action.second;
 
-        if (action.first == 'S')
-            ship.waypoint.second -= action.second;
+    if (action.first == 'S')
+        ship.waypoint.second -= action.second;
 
-        if (action.first == 'E')
-            ship.waypoint.first += action.second;
+    if (action.first == 'E')
+        ship.waypoint.first += action.second;
 
-        if (action.first == 'W')
-            ship.waypoint.first -= action.second;
+    if (action.first == 'W')
+        ship.waypoint.first -= action.second;
 
-        if (action.first == 'L') {
-            ship.rotate_waypoint(action.second);
-        }
-
-        if (action.first == 'R') {
-            ship.rotate_waypoint(-action.second);
-        }
-
-        if (action.first == 'F') {
-            ship.x += (ship.waypoint.first * action.second);
-            ship.y += (ship.waypoint.second * action.second);
-        }
+    if (action.first == 'L') {
+        ship.rotate_waypoint(action.second);
     }
-    return abs(ship.x) + abs(ship.y);
+
+    if (action.first == 'R') {
+        ship.rotate_waypoint(-action.second);
+    }
+
+    if (action.first == 'F') {
+        ship.x += (ship.waypoint.first * action.second);
+        ship.y += (ship.waypoint.second * action.second);
+    }
 }
 
-int p1(Ship &ship, vector<Action> &actions) {
-    for (Action action: actions) {
-        if (action.first == 'N')
-            ship.y += action.second;
+void p1(Ship &ship, Action action) {
+    if (action.first == 'N')
+        ship.y += action.second;
 
-        if (action.first == 'S')
-            ship.y -= action.second;
+    if (action.first == 'S')
+        ship.y -= action.second;
 
-        if (action.first == 'E')
-            ship.x += action.second;
+    if (action.first == 'E')
+        ship.x += action.second;
 
-        if (action.first == 'W')
-            ship.x -= action.second;
+    if (action.first == 'W')
+        ship.x -= action.second;
 
-        if (action.first == 'L')
-            ship.rotate_ship(-action.second);
+    if (action.first == 'L')
+        ship.rotate_ship(-action.second);
 
-        if (action.first == 'R')
-            ship.rotate_ship(action.second);
+    if (action.first == 'R')
+        ship.rotate_ship(action.second);
 
-        if (action.first == 'F') {
-            ship.x += (ship.d[ship.dir].first * action.second);
-            ship.y += (ship.d[ship.dir].second * action.second);
-        }
+    if (action.first == 'F') {
+        ship.x += (ship.d[ship.dir].first * action.second);
+        ship.y += (ship.d[ship.dir].second * action.second);
     }
-    return abs(ship.x) + abs(ship.y);
 }
 
 int main() {
-    vector<Action> actions;
     Ship s1, s2;
 
     for (string line; getline(cin, line);) {
-        actions.push_back({line[0], stoi(line.substr(1, line.length()-1))});
+        pair<char,int> action = {line[0], stoi(line.substr(1, line.length()-1))};
+        p1(s1, action); p2(s2, action);
     }
 
-    printf("p1: %d\np2: %d\n", p1(s1, actions), p2(s2, actions));
+    printf("p1: %d\np2: %d\n", abs(s1.x) + abs(s1.y), abs(s2.x) + abs(s2.y));
 }
