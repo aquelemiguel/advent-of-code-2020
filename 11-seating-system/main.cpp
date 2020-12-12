@@ -57,7 +57,6 @@ int run(pair<int,int> strategy(int i, int j, pair<int,int> k), int rule) {
             }
         }
         ferry = temp_ferry;
-
     } while (has_changed);
 
     return count_occupied(ferry);
