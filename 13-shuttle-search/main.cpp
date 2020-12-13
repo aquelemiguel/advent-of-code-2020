@@ -5,7 +5,7 @@ typedef unsigned long long ull;
 
 ull modular_multiplicative_inverse(ull a, ull mod) { 
     for (ull i = 1; i < mod; i++)
-        if (((a % mod)*i) % mod == 1) return i;
+        if (a % mod * i % mod == 1) return i;
     return 1;
 }
 
