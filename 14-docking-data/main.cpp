@@ -39,10 +39,9 @@ void p1(map<ull,ull> &mem, string mask, int addr, ull value) {
 }
 
 int main() {
-    string mask;
     map<ull,ull> mem1, mem2;
 
-    for (string line; getline(cin, line);) {
+    for (string line, mask; getline(cin, line);) {
         smatch match;
 
         if (regex_match(line, match, regex("mask = (.+)")))
