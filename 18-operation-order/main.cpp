@@ -19,57 +19,25 @@ ull calc_RPN(queue<char> q) {
     return res.top();
 }
 
-ull shunting_yard_v2(vector<char> tokens) {
+ull shunting_yard(vector<char> tokens, bool equal_op) {
     queue<char> q;
     stack<char> s;
 
-    for (size_t i = 0; i < tokens.size(); i++) {
-        if (isdigit(tokens[i]))
-            q.push(tokens[i]);
+    for (char token : tokens) {
+        if (isdigit(token))
+            q.push(token);
 
-        else if (tokens[i] == '(' || tokens[i] == '+')
-            s.push(tokens[i]);
+        else if (token == '(' || (!equal_op && token == '+'))
+            s.push(token);
 
-        else if (tokens[i] == '*') {
-            while (!s.empty() && s.top() == '+') {
+        else if (token == '*' || (equal_op && token == '+')) {
+            while (!s.empty() && (s.top() == '+' || (equal_op && s.top() == '*'))) {
                 q.push(s.top()); s.pop();
             }
-            s.push(tokens[i]);
+            s.push(token);
         }
 
-        else if (tokens[i] == ')') {
-            while (s.top() != '(') {
-                q.push(s.top()); s.pop();
-            }
-            s.pop();
-        }
-    }
-
-    while (!s.empty()) {
-        q.push(s.top()); s.pop();
-    }
-    return calc_RPN(q);
-}
-
-ull shunting_yard_v1(vector<char> tokens) {
-    queue<char> q;
-    stack<char> s;
-
-    for (size_t i = 0; i < tokens.size(); i++) {
-        if (isdigit(tokens[i]))
-            q.push(tokens[i]);
-
-        else if (tokens[i] == '(')
-            s.push(tokens[i]);
-
-        else if (tokens[i] == '+' || tokens[i] == '*') {
-            while (!s.empty() && (s.top() == '+' || s.top() == '*')) {
-                q.push(s.top()); s.pop();
-            }
-            s.push(tokens[i]);
-        }
-
-        else if (tokens[i] == ')') {
+        else if (token == ')') {
             while (s.top() != '(') {
                 q.push(s.top()); s.pop();
             }
@@ -84,15 +52,14 @@ ull shunting_yard_v1(vector<char> tokens) {
 }
 
 int main() {
-    vector<vector<char>> exprs;
-
     ull p1 = 0, p2 = 0;
     
     for (string s; getline(cin, s);) {
         s.erase(remove_if(s.begin(), s.end(), ::isspace), s.end());
-        p1 += shunting_yard_v1(vector<char>(s.begin(), s.end()));
-        p2 += shunting_yard_v2(vector<char>(s.begin(), s.end()));
-    }
+        vector<char> exprs(s.begin(), s.end());
 
+        p1 += shunting_yard(exprs, true);
+        p2 += shunting_yard(exprs, false);
+    }
     printf("p1: %llu\np2: %llu\n", p1, p2);
 }
