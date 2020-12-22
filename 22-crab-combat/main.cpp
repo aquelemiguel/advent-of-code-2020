@@ -13,15 +13,14 @@ deque<int> get_deck() {
     return deck;
 }
 
-int get_score(deque<int> deck) {
+int get_score(deque<int> d) {
     int score = 0;
-    for (int turn = deck.size(); !deck.empty(); turn--) {
-        score += deck.front() * turn;
-        deck.pop_front();
+    for (int turn = d.size(); !d.empty(); turn--) {
+        score += d.front() * turn;
+        d.pop_front();
     }
     return score;
 }
-
 
 void recursive_combat(deque<int> &p1, deque<int> &p2) {
     set<pair<deque<int>, deque<int>>> turns;
@@ -37,7 +36,6 @@ void recursive_combat(deque<int> &p1, deque<int> &p2) {
         p1.pop_front(); p2.pop_front();
         
         if (top_p1 <= p1.size() && top_p2 <= p2.size()) {
-
             deque<int> rec1 = p1, rec2 = p2; 
 
             for (int i = 0; i < p1.size() - top_p1; i++) rec1.pop_back();
@@ -45,7 +43,7 @@ void recursive_combat(deque<int> &p1, deque<int> &p2) {
 
             recursive_combat(rec1, rec2);
 
-            if (rec1.size()) {
+            if (!rec1.empty()) {
                 p1.push_back(top_p1);
                 p1.push_back(top_p2);
             } 
@@ -53,7 +51,6 @@ void recursive_combat(deque<int> &p1, deque<int> &p2) {
                 p2.push_back(top_p2);
                 p2.push_back(top_p1);
             }
-
         } 
         else {
             if (top_p1 > top_p2) {
@@ -65,49 +62,30 @@ void recursive_combat(deque<int> &p1, deque<int> &p2) {
             }
         }
     }
-    return;
 }
 
-void combat(deque<int> &p1, deque<int> &p2) {
-    cout << p1.front() << " " << p2.front() << endl;
-
-    if (p1.front() > p2.front()) {
-        p1.push_back(p1.front());
-        p1.push_back(p2.front());
-    } else {
-        p2.push_back(p2.front());
-        p2.push_back(p1.front());
-    }
-
-    p1.pop_front(); p2.pop_front();
+void combat(deque<int> &d1, deque<int> &d2) {
+    if (d2.front() > d1.front()) 
+        swap(d1, d2);
+    
+    d1.push_back(d1.front());
+    d1.push_back(d2.front());
+    d1.pop_front(); d2.pop_front();
 }
 
+int p2(deque<int> d1, deque<int> d2) {
+    recursive_combat(d1, d2);
+    return !d1.empty() ? get_score(d1) : get_score(d2);
+}
+
+int p1(deque<int> d1, deque<int> d2) {
+    while (!d1.empty() && !d2.empty())
+        combat(d1, d2);
+
+    return !d1.empty() ? get_score(d1) : get_score(d2);
+}
 
 int main() {
-    deque<int> p1 = get_deck(), p2 = get_deck();
-
-    // while (p1.size() != 0 && p2.size() != 0) {
-    //     combat(p1, p2);
-    // }
-
-    // int res = p1.size() ? get_score(p1) : get_score(p2);
-    // cout << res << endl;
-
-    
-    recursive_combat(p1, p2);
-    
-    // while (!p1.empty()) {
-    //     cout << p1.front() << " ";
-    //     p1.pop_front();
-    // }
-    // cout << endl;
-
-    // while (!p2.empty()) {
-    //     cout << p2.front() << " ";
-    //     p2.pop_front();
-    // }
-    // cout << endl;
-
-    int res = p1.size() ? get_score(p1) : get_score(p2);
-    cout << res << endl;
+    deque<int> d1 = get_deck(), d2 = get_deck();
+    printf("p1: %d\np2: %d\n", p1(d1, d2), p2(d1, d2));
 }
