@@ -51,11 +51,11 @@ int main() {
 
     for (string line; getline(cin, line);) {
         vector<string> dirs;
-        for (smatch m; regex_search(line, m, re); line = m.suffix().str()) {
-            for (int i = 1; i < m.size(); i++) {
+
+        for (smatch m; regex_search(line, m, re); line = m.suffix().str())
+            for (int i = 1; i < m.size(); i++)
                 dirs.push_back(m[i]);
-            }
-        }
+
         flip_tile(black, dirs);
     }
 
